@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Borrow Request - Library Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Borrow Request</h4>
+            </div>
+            <div class="card-body">
+                <h5>{{ book.title }}</h5>
+                <p class="text-muted">by {{ book.author }}</p>
+                
+                <form method="post" id="borrowForm" onsubmit="return validateBorrowForm();">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.due_date.id_for_label }}" class="form-label">Due Date</label>
+                        {{ form.due_date }}
+                        <small class="form-text text-muted">Select when you plan to return this book.</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> Submit Request
+                        </button>
+                        <a href="{% url 'library:book_detail' book.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function validateBorrowForm() {
+    const dueDateInput = document.querySelector('input[name="due_date"]');
+    if (!dueDateInput.value) {
+        alert('Please select a due date.');
+        return false;
+    }
+    
+    const dueDate = new Date(dueDateInput.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (dueDate <= today) {
+        alert('Due date must be in the future.');
+        return false;
+    }
+    
+    return confirm('Confirm borrow request?');
+}
+</script>
+{% endblock %}

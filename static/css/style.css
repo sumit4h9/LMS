@@ -1,0 +1,146 @@
+/* Custom styles for Library Management System */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar styling */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Card hover effects */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(179, 2, 2, 0.2);
+}
+
+/* Book cards */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Status badges */
+.badge {
+    padding: 0.5em 0.75em;
+    font-size: 0.9rem;
+}
+
+/* Table styling */
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+/* Overdue highlighting */
+.overdue-row {
+    background-color: #f8d7da !important;
+    font-weight: bold;
+}
+
+/* Button spacing */
+.btn {
+    margin-right: 5px;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+/* Form styling */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Jumbotron alternative for Bootstrap 5 */
+.jumbotron {
+    background-color: #e9ecef;
+}
+
+/* Alert animations */
+.alert {
+    animation: slideIn 0.3s ease-in;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Dashboard cards */
+.dashboard-card {
+    margin-bottom: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* Search form */
+#searchForm {
+    margin-bottom: 20px;
+}
+
+/* Loading indicator */
+.loading {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.loading.active {
+    display: block;
+}
+
+/* Book availability colors */
+.available {
+    color: #28a745;
+}
+
+.unavailable {
+    color: #dc3545;
+}
+
+/* Status colors */
+.status-pending {
+    color: #ffc107;
+}
+
+.status-approved {
+    color: #0d6efd;
+}
+
+.status-returned {
+    color: #6c757d;
+}
+
+.status-rejected {
+    color: #dc3545;
+}

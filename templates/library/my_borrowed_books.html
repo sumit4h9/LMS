@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}My Borrowed Books - Library Management System{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">My Borrowed Books</h1>
+
+<div class="card">
+    <div class="card-body">
+        {% if active_borrows %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th>Borrow Date</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for borrow in active_borrows %}
+                            <tr {% if borrow.is_overdue %}class="table-danger overdue-row"{% endif %}>
+                                <td>{{ borrow.book.title }}</td>
+                                <td>{{ borrow.book.author }}</td>
+                                <td>
+                                    {% if borrow.status == 'Pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% elif borrow.status == 'Approved' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ borrow.borrow_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {{ borrow.due_date }}
+                                    {% if borrow.is_overdue %}
+                                        <span class="badge bg-danger">OVERDUE</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'library:book_detail' borrow.book.pk %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    {% if borrow.status == 'Approved' %}
+                                        <a href="{% url 'library:return_book' borrow.pk %}" 
+                                           class="btn btn-sm btn-primary"
+                                           onclick="return confirmReturn();">
+                                            <i class="fas fa-undo"></i> Return
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> You have no active borrowed books.
+                <a href="{% url 'library:book_list' %}" class="alert-link">Browse books</a> to borrow.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function confirmReturn() {
+    return confirm('Are you sure you want to return this book?');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const overdueRows = document.querySelectorAll('.overdue-row');
+    overdueRows.forEach(row => {
+        row.style.backgroundColor = '#f8d7da';
+    });
+});
+</script>
+{% endblock %}

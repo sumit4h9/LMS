@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}My Dashboard - Library Management System{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">My Dashboard</h1>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Borrowed</h5>
+                <h2>{{ total_borrowed }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Active Borrows</h5>
+                <h2>{{ active_borrows.count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">Overdue Books</h5>
+                <h2>{{ overdue_books|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Browse Books</h5>
+                <a href="{% url 'library:book_list' %}" class="btn btn-light mt-2">Go to Books</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Borrows -->
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        <h4 class="mb-0">Active Borrows</h4>
+    </div>
+    <div class="card-body">
+        {% if active_borrows %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for borrow in active_borrows %}
+                            <tr {% if borrow.is_overdue %}class="table-danger overdue-row"{% endif %}>
+                                <td>{{ borrow.book.title }}</td>
+                                <td>{{ borrow.book.author }}</td>
+                                <td>
+                                    {% if borrow.status == 'Pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% elif borrow.status == 'Approved' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ borrow.due_date }}
+                                    {% if borrow.is_overdue %}
+                                        <span class="badge bg-danger">OVERDUE</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if borrow.status == 'Approved' %}
+                                        <a href="{% url 'library:return_book' borrow.pk %}" 
+                                           class="btn btn-sm btn-primary"
+                                           onclick="return confirmReturn();">
+                                            <i class="fas fa-undo"></i> Return
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">Awaiting approval</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">You have no active borrows.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Borrow History -->
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h4 class="mb-0">Recent Borrow History</h4>
+    </div>
+    <div class="card-body">
+        {% if borrow_history %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Borrow Date</th>
+                            <th>Due Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for borrow in borrow_history %}
+                            <tr>
+                                <td>{{ borrow.book.title }}</td>
+                                <td>{{ borrow.borrow_date|date:"M d, Y" }}</td>
+                                <td>{{ borrow.due_date }}</td>
+                                <td>{{ borrow.return_date|default:"N/A" }}</td>
+                                <td>
+                                    {% if borrow.status == 'Pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% elif borrow.status == 'Approved' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif borrow.status == 'Returned' %}
+                                        <span class="badge bg-secondary">Returned</span>
+                                    {% elif borrow.status == 'Rejected' %}
+                                        <span class="badge bg-danger">Rejected</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <a href="{% url 'library:borrow_history' %}" class="btn btn-outline-primary">View Full History</a>
+        {% else %}
+            <p class="text-muted">No borrow history available.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function confirmReturn() {
+    return confirm('Are you sure you want to return this book?');
+}
+
+// Highlight overdue books
+document.addEventListener('DOMContentLoaded', function() {
+    const overdueRows = document.querySelectorAll('.overdue-row');
+    overdueRows.forEach(row => {
+        row.style.backgroundColor = '#f8d7da';
+    });
+});
+</script>
+{% endblock %}

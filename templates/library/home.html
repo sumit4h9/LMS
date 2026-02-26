@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Library Management System{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded-3 mb-4">
+    <h1 class="display-4" >Welcome to Library Management System</h1>
+    <p class="lead">Discover, borrow, and manage your favorite books with ease.</p>
+    <hr class="my-4">
+    <p>Browse our extensive collection of books across various categories.</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'library:book_list' %}" role="button">
+        <i class="fas fa-book"></i> Browse Books
+    </a>
+    {% if not user.is_authenticated %}
+        <a class="btn btn-success btn-lg" href="{% url 'accounts:register' %}" role="button">
+            <i class="fas fa-user-plus"></i> Join Now
+        </a>
+    {% endif %}
+</div>
+
+<h2 class="mb-4">Recent Additions</h2>
+<div class="row">
+    {% for book in recent_books %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if book.cover_image %}
+                    <img src="{{ book.cover_image.url }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-book fa-3x text-white"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text text-muted">by {{ book.author }}</p>
+                    <p class="card-text">
+                        <small>
+                            {% if book.is_available %}
+                                <span class="badge bg-success">Available</span>
+                            {% else %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                            {% endif %}
+                        </small>
+                    </p>
+                    <a href="{% url 'library:book_detail' book.pk %}" class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="mt-5">
+    <h2 class="mb-4">Categories</h2>
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="text-muted">{{ category.books.count }} books</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

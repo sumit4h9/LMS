@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Library Management System{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Admin Dashboard</h1>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-book"></i> Total Books</h5>
+                <h2>{{ total_books }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-users"></i> Total Users</h5>
+                <h2>{{ total_users }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-hand-holding"></i> Borrowed Books</h5>
+                <h2>{{ total_borrowed }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-clock"></i> Pending Requests</h5>
+                <h2>{{ pending_requests }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-exclamation-triangle"></i> Overdue Books</h5>
+                <h2>{{ overdue_count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">Quick Actions</h4>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'admin:library_book_add' %}" class="btn btn-primary me-2">
+                    <i class="fas fa-plus"></i> Add New Book
+                </a>
+                <a href="{% url 'library:borrow_requests_list' %}" class="btn btn-warning me-2">
+                    <i class="fas fa-list"></i> View Borrow Requests
+                </a>
+                <a href="{% url 'library:users_list' %}" class="btn btn-success me-2">
+                    <i class="fas fa-users"></i> View All Users
+                </a>
+                <a href="{% url 'admin:index' %}" class="btn btn-info">
+                    <i class="fas fa-cog"></i> Django Admin Panel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Borrow Requests -->
+<div class="card">
+    <div class="card-header bg-warning">
+        <h4 class="mb-0">Recent Pending Requests</h4>
+    </div>
+    <div class="card-body">
+        {% if recent_requests %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Book</th>
+                            <th>Request Date</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for borrow in recent_requests %}
+                            <tr>
+                                <td>{{ borrow.user.username }}</td>
+                                <td>{{ borrow.book.title }}</td>
+                                <td>{{ borrow.borrow_date|date:"M d, Y H:i" }}</td>
+                                <td>{{ borrow.due_date }}</td>
+                                <td>
+                                    <a href="{% url 'library:approve_borrow' borrow.pk %}" 
+                                       class="btn btn-sm btn-success"
+                                       onclick="return confirm('Approve this borrow request?');">
+                                        <i class="fas fa-check"></i> Approve
+                                    </a>
+                                    <a href="{% url 'library:reject_borrow' borrow.pk %}" 
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Reject this borrow request?');">
+                                        <i class="fas fa-times"></i> Reject
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <a href="{% url 'library:borrow_requests_list' %}" class="btn btn-outline-primary">
+                View All Requests
+            </a>
+        {% else %}
+            <p class="text-muted">No pending borrow requests.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
