@@ -1,4 +1,4 @@
-# Library Management System (Django) — Final Year Project Report
+# Library Management System (Django) — Project Report
 
 Project Title: **Library Management System**  
 Platform: **Django (Python) + SQLite**  
