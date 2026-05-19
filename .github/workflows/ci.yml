@@ -63,3 +63,6 @@ jobs:
           
           # 5. Run the new Docker container (mapping port 80 on EC2 to port 8000 in the container)
           docker run -d --name library_app -p 80:8000 library_project:latest
+
+          # 6. Run database migrations to ensure all tables exist
+          docker exec library_app python manage.py migrate
